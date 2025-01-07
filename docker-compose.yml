@@ -11,7 +11,7 @@ services:
       DB_CONNECTION: ${DB_CONNECTION:-pgsql}
       FILESYSTEM_DISK: local
       LOCAL_FILESYSTEM_VISIBILITY: public
-    env_file: 
+    env_file:
     - ./api/.env
     volumes:
     - opnform_storage:/usr/share/nginx/html/storage:rw
@@ -22,14 +22,14 @@ services:
     environment:
       <<: *api-environment
       IS_API_WORKER: "true"
-    env_file: 
+    env_file:
     - ./api/.env
     volumes:
     - opnform_storage:/usr/share/nginx/html/storage:rw
 
   ui:
     image: jhumanj/opnform-client:latest
-    env_file: 
+    env_file:
     - ./client/.env
 
   redis:
@@ -45,11 +45,9 @@ services:
       - postgres-data:/var/lib/postgresql/data
 
   ingress:
-    image: nginx:1
-    volumes:
-      - ./docker/nginx.conf:/etc/nginx/templates/default.conf.template
+    image: jhumanj/opnform-web:latest
     ports:
-      - 80:80
+      - 8222:80
 
 volumes:
   postgres-data:

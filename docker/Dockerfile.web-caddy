@@ -1,0 +1,21 @@
+# Use the official Caddy image as a parent image
+FROM caddy:2.7.4-alpine
+
+# Set working directory
+WORKDIR /app
+
+# Copy the Caddyfile into the container
+COPY docker/Caddyfile /etc/caddy/Caddyfile
+
+# Create necessary directories
+RUN mkdir -p /app/public /usr/share/nginx/html/public
+
+# Expose port 80
+EXPOSE 80
+
+# Set environment variables with default values
+ENV OPNFORM_UI_HOSTNAME=ui
+ENV OPNFORM_API_HOSTNAME=api
+
+# Run Caddy
+CMD ["caddy", "run", "--config", "/etc/caddy/Caddyfile", "--adapter", "caddyfile"]

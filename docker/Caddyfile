@@ -1,0 +1,38 @@
+// {
+//     debug
+// }
+
+:80 {
+    root * /app/public
+    encode gzip
+
+    @api_paths {
+        path /api/* /open/* /local/temp/* /forms/assets/*
+    }
+
+    handle @api_paths {
+        uri strip_prefix /api
+        try_files {path} {path}/ /index.php?{query}
+    }
+
+    handle {
+        reverse_proxy {$OPNFORM_UI_HOSTNAME:ui}:3000 {
+            header_up X-Real-IP {remote_host}
+            header_up X-Forwarded-Host {host}
+            header_up X-Forwarded-Port {server_port}
+            header_up Upgrade {http.request.header.Upgrade}
+            header_up Connection {http.request.header.Connection}
+        }
+    }
+
+    php_fastcgi {$OPNFORM_API_HOSTNAME:api}:9000 {
+        root /usr/share/nginx/html/public
+        index index.php
+    }
+
+    log {
+        output stdout
+        format console
+        level error
+    }
+}
